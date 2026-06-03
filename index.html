@@ -4,19 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>당골집</title>
+</head>
+<body>
   <style>
     :root {
       --bg: #fff8f0;
       --surface: #ffffff;
-      --surface-soft: #fff3d7;
+      --surface-soft: #fff4d6;
       --text: #111827;
       --muted: #6b7280;
       --primary: #f6c400;
-      --primary-dark: #c58a00;
+      --primary-dark: #b77900;
       --border: #eadfce;
       --danger: #dc2626;
       --success: #16a34a;
-      --shadow: 0 18px 50px rgba(92, 64, 18, 0.12);
+      --shadow: 0 18px 48px rgba(92, 64, 18, 0.12);
       --radius: 24px;
     }
 
@@ -28,7 +30,7 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at top left, rgba(246, 196, 0, 0.18), transparent 32%),
+        radial-gradient(circle at top left, rgba(246, 196, 0, 0.16), transparent 32%),
         linear-gradient(180deg, #fff8f0 0%, #fafaf7 100%);
       color: var(--text);
       line-height: 1.5;
@@ -36,8 +38,7 @@
 
     button,
     input,
-    textarea,
-    select {
+    textarea {
       font: inherit;
     }
 
@@ -56,12 +57,12 @@
     }
 
     .topbar {
-      background: rgba(255, 255, 255, 0.86);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(14px);
       position: sticky;
       top: 0;
       z-index: 10;
+      background: rgba(255, 255, 255, 0.88);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(14px);
     }
 
     .topbar-inner {
@@ -80,7 +81,6 @@
       gap: 12px;
       font-size: 24px;
       font-weight: 950;
-      letter-spacing: 0;
     }
 
     .brand-mark {
@@ -98,7 +98,7 @@
     .admin-link {
       color: var(--muted);
       text-decoration: none;
-      font-weight: 800;
+      font-weight: 850;
       font-size: 14px;
     }
 
@@ -108,7 +108,7 @@
       border-radius: 32px;
       background: linear-gradient(135deg, #fff7dc 0%, #ffffff 64%);
       box-shadow: var(--shadow);
-      border: 1px solid rgba(234, 223, 206, 0.7);
+      border: 1px solid rgba(234, 223, 206, 0.8);
     }
 
     .eyebrow {
@@ -194,13 +194,14 @@
 
     .info-row span {
       color: var(--muted);
-      font-weight: 800;
+      font-weight: 850;
     }
 
     .info-row strong {
       text-align: right;
       font-size: 18px;
       font-weight: 950;
+      word-break: keep-all;
     }
 
     .price {
@@ -290,6 +291,12 @@
       box-shadow: 0 12px 28px rgba(246, 196, 0, 0.25);
     }
 
+    .btn.secondary {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
     .btn:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -306,10 +313,6 @@
       color: var(--danger);
     }
 
-    .message.success {
-      color: var(--success);
-    }
-
     .notice {
       padding: 14px 16px;
       border-radius: 18px;
@@ -317,6 +320,98 @@
       border: 1px solid #f6dfaa;
       color: #6b5122;
       font-size: 14px;
+      font-weight: 750;
+    }
+
+    .complete-page {
+      width: min(640px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 64px;
+      min-height: calc(100vh - 72px);
+      display: grid;
+      align-items: center;
+    }
+
+    .complete-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .check-circle {
+      width: 74px;
+      height: 74px;
+      margin: 0 auto 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #dcfce7;
+      color: #15803d;
+      font-size: 38px;
+      font-weight: 950;
+    }
+
+    .complete-card h1 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 7vw, 42px);
+    }
+
+    .complete-card .lead {
+      margin: 0;
+      color: #374151;
+      font-size: 19px;
+      font-weight: 850;
+    }
+
+    .complete-guide {
+      margin: 18px 0 0;
+      padding: 16px;
+      border-radius: 20px;
+      background: #fff7df;
+      color: #5f5444;
+      font-size: 15px;
+      font-weight: 750;
+      text-align: left;
+    }
+
+    .complete-details {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .complete-details .info-row {
+      padding: 12px 0;
+    }
+
+    .bank-box {
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 22px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    .bank-box h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .bank-box p {
+      margin: 6px 0;
+      color: #374151;
+      font-weight: 800;
+    }
+
+    .contact-text {
+      margin: 18px 0 14px;
+      color: var(--muted);
+      font-size: 15px;
       font-weight: 750;
     }
 
@@ -402,7 +497,8 @@
       }
 
       .hero,
-      .card {
+      .card,
+      .complete-card {
         padding: 20px;
       }
 
@@ -430,8 +526,7 @@
       }
     }
   </style>
-</head>
-<body>
+
   <div id="app" class="app"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -443,6 +538,12 @@
       name: "난각1번 당일산란 자연방사 무항생제 유정란 20구",
       price: 9900,
       shippingFee: 4000
+    };
+
+    const BANK_INFO = {
+      bankName: "은행명 입력",
+      accountNumber: "계좌번호 입력",
+      holder: "예금주 입력"
     };
 
     const app = document.getElementById("app");
@@ -669,10 +770,10 @@
       try {
         if (submitButton) {
           submitButton.disabled = true;
-          submitButton.textContent = "주문 접수 중";
+          submitButton.textContent = "주문 접수 중...";
         }
 
-        const { error } = await supabaseClient
+        const { data, error } = await supabaseClient
           .from("orders")
           .insert([orderData])
           .select();
@@ -683,20 +784,92 @@
           return;
         }
 
-        form.reset();
-        form.quantity.value = "1";
-        updateTotalPrice();
-
-        setMessage("주문이 접수되었습니다. 입금 확인 후 순차적으로 안내드리겠습니다.", "success");
+        const savedOrder = Array.isArray(data) ? data[0] : data;
+        showOrderComplete(orderData, savedOrder);
       } catch (error) {
         console.error(error);
         setMessage("주문 저장 중 문제가 발생했습니다. 다시 시도해주세요.", "error");
       } finally {
-        if (submitButton) {
+        if (submitButton && document.body.contains(submitButton)) {
           submitButton.disabled = false;
           submitButton.textContent = "주문하기";
         }
       }
+    }
+
+    function showOrderComplete(orderData, savedOrder) {
+      app.innerHTML = `
+        <header class="topbar">
+          <div class="topbar-inner">
+            <div class="brand">
+              <span class="brand-mark">당</span>
+              <span>당골집</span>
+            </div>
+          </div>
+        </header>
+
+        <main class="complete-page">
+          <section class="complete-card">
+            <div class="check-circle">✓</div>
+
+            <h1>주문이 접수되었습니다</h1>
+            <p class="lead">입금 확인 후 순차적으로 안내드리겠습니다.</p>
+
+            <div class="complete-guide">
+              주문 내용 확인 후 배송 및 입금 관련 안내를 드릴 예정입니다.<br>
+              입금자명은 주문자명과 동일하게 입력해주세요.
+            </div>
+
+            <div class="complete-details">
+              <div class="info-row">
+                <span>상품명</span>
+                <strong>${escapeHtml(orderData.product_name)}</strong>
+              </div>
+              <div class="info-row">
+                <span>주문자명</span>
+                <strong>${escapeHtml(orderData.buyer_name)}</strong>
+              </div>
+              <div class="info-row">
+                <span>연락처</span>
+                <strong>${escapeHtml(orderData.buyer_phone)}</strong>
+              </div>
+              <div class="info-row">
+                <span>수량</span>
+                <strong>${escapeHtml(orderData.quantity)}개</strong>
+              </div>
+              <div class="info-row">
+                <span>총 결제금액</span>
+                <strong>${formatWon(orderData.total_price)}</strong>
+              </div>
+              <div class="info-row">
+                <span>큐레이터 코드</span>
+                <strong>${escapeHtml(orderData.curator_code)}</strong>
+              </div>
+              <div class="info-row">
+                <span>주문 상태</span>
+                <strong>입금대기</strong>
+              </div>
+            </div>
+
+            <div class="bank-box">
+              <h2>입금 안내</h2>
+              <p>은행: ${escapeHtml(BANK_INFO.bankName)}</p>
+              <p>계좌번호: ${escapeHtml(BANK_INFO.accountNumber)}</p>
+              <p>예금주: ${escapeHtml(BANK_INFO.holder)}</p>
+            </div>
+
+            <p class="contact-text">
+              주문 관련 문의가 필요하시면 아래 문의하기 버튼을 눌러주세요.
+            </p>
+
+            <button class="btn secondary" type="button" onclick="contactUs()">문의하기</button>
+          </section>
+        </main>
+      `;
+    }
+
+    function contactUs() {
+      alert("문의 채널은 운영자가 연결할 예정입니다.");
     }
 
     function orderStatusLabel(status) {
@@ -830,6 +1003,7 @@
 
     window.updateTotalPrice = updateTotalPrice;
     window.submitOrder = submitOrder;
+    window.contactUs = contactUs;
 
     render();
   </script>
