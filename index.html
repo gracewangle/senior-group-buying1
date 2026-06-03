@@ -49,7 +49,7 @@
     }
 
     .page {
-      width: min(960px, calc(100% - 32px));
+      width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
       padding: 28px 0 56px;
     }
@@ -64,7 +64,7 @@
     }
 
     .topbar-inner {
-      width: min(960px, calc(100% - 32px));
+      width: min(1120px, calc(100% - 32px));
       min-height: 72px;
       margin: 0 auto;
       display: flex;
@@ -326,7 +326,7 @@
 
     .complete-card {
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
       background: #ffffff;
       border-radius: 24px;
       padding: 28px 22px;
@@ -416,14 +416,6 @@
       font-weight: 750;
     }
 
-    .recommend-code {
-      margin: 10px 0 16px;
-      color: #9ca3af;
-      font-size: 12px;
-      font-weight: 700;
-      text-align: center;
-    }
-
     .contact-button {
       display: block;
       width: 100%;
@@ -456,6 +448,58 @@
       font-weight: 700;
     }
 
+    .admin-section {
+      margin-top: 22px;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 950;
+    }
+
+    .settlement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .settlement-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .settlement-card h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .mini-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1e7d8;
+      font-size: 14px;
+    }
+
+    .mini-row:last-child {
+      border-bottom: 0;
+    }
+
+    .mini-row span {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .mini-row strong {
+      text-align: right;
+      font-weight: 950;
+    }
+
     .table-wrap {
       overflow-x: auto;
       border-radius: var(--radius);
@@ -467,7 +511,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 920px;
+      min-width: 1120px;
     }
 
     th,
@@ -513,8 +557,9 @@
       font-weight: 850;
     }
 
-    @media (max-width: 820px) {
-      .layout {
+    @media (max-width: 920px) {
+      .layout,
+      .settlement-grid {
         grid-template-columns: 1fr;
       }
 
@@ -565,11 +610,12 @@
     };
 
     const BANK_INFO = {
-      bankName: "은행명 입력",
-      accountNumber: "계좌번호 입력",
-      holder: "예금주 입력"
+      bankName: "우리은행",
+      accountNumber: "1234",
+      holder: "ㅇㅇ력"
     };
 
+    const DEFAULT_COMMISSION_RATE = 0.1;
     const app = document.getElementById("app");
 
     const isSupabaseConfigured =
@@ -590,11 +636,15 @@
     // 실제 운영 시 큐레이터 이름/연락처는 별도 curators 테이블에서 관리할 수 있습니다.
 
     function formatWon(value) {
-      return `${Number(value || 0).toLocaleString("ko-KR")}원`;
+      return `${Math.round(Number(value || 0)).toLocaleString("ko-KR")}원`;
+    }
+
+    function formatRate(value) {
+      return `${Math.round(Number(value || 0) * 1000) / 10}%`;
     }
 
     function toNumber(value) {
-      const number = Number(String(value || "0").replace(/[^\d]/g, ""));
+      const number = Number(String(value || "0").replace(/[^\d.]/g, ""));
       return Number.isFinite(number) ? number : 0;
     }
 
@@ -616,6 +666,11 @@
     function calculateTotalPrice(quantity) {
       const qty = Math.max(1, toNumber(quantity));
       return PRODUCT.price * qty + PRODUCT.shippingFee;
+    }
+
+    function calculateProductAmount(quantity) {
+      const qty = Math.max(1, toNumber(quantity));
+      return PRODUCT.price * qty;
     }
 
     function isAdminPage() {
@@ -641,14 +696,13 @@
     }
 
     function renderOrderPage() {
-      const curatorCode = getCuratorCode();
       const totalPrice = calculateTotalPrice(1);
 
       renderShell(`
         <section class="hero">
           <span class="eyebrow">당골집 공동구매 주문</span>
           <h1>${escapeHtml(PRODUCT.name)}</h1>
-          <p class="subtitle">큐레이터가 공유한 링크로 주문을 접수합니다.</p>
+          <p class="subtitle">공동구매 상품 주문을 접수합니다.</p>
         </section>
 
         <section class="layout">
@@ -663,7 +717,7 @@
                 <strong>${escapeHtml(PRODUCT.name)}</strong>
               </div>
               <div class="info-row">
-                <span>상품 가격</span>
+                <span>1개당 가격</span>
                 <strong class="price">${formatWon(PRODUCT.price)}</strong>
               </div>
               <div class="info-row">
@@ -844,6 +898,31 @@
               </div>
 
               <div class="summary-row">
+                <span>1개당 가격</span>
+                <strong>${formatWon(orderData.product_price)}</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>수량</span>
+                <strong>${Number(orderData.quantity).toLocaleString("ko-KR")}개</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>상품 금액</span>
+                <strong>${formatWon(Number(orderData.product_price) * Number(orderData.quantity))}</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>배송비</span>
+                <strong>${formatWon(orderData.shipping_fee)}</strong>
+              </div>
+
+              <div class="summary-row total">
+                <span>총 결제금액</span>
+                <strong>${formatWon(orderData.total_price)}</strong>
+              </div>
+
+              <div class="summary-row">
                 <span>주문자명</span>
                 <strong>${escapeHtml(orderData.buyer_name)}</strong>
               </div>
@@ -854,13 +933,8 @@
               </div>
 
               <div class="summary-row">
-                <span>수량</span>
-                <strong>${Number(orderData.quantity).toLocaleString("ko-KR")}개</strong>
-              </div>
-
-              <div class="summary-row total">
-                <span>총 결제금액</span>
-                <strong>${Number(orderData.total_price).toLocaleString("ko-KR")}원</strong>
+                <span>주소</span>
+                <strong>${escapeHtml(orderData.address)}</strong>
               </div>
 
               <div class="summary-row">
@@ -878,8 +952,6 @@
               <p>주문 내용 확인 후 배송 및 입금 관련 안내를 드릴 예정입니다.</p>
             </div>
 
-            <p class="recommend-code">추천 코드: ${escapeHtml(orderData.curator_code)}</p>
-
             <a class="contact-button" href="${escapeHtml(KAKAO_CHAT_URL)}" target="_blank" rel="noopener noreferrer">
               카카오톡으로 문의하기
             </a>
@@ -894,6 +966,7 @@
       const labels = {
         pending: "입금대기",
         paid: "입금완료",
+        cancelled: "취소",
         canceled: "취소",
         refunded: "환불"
       };
@@ -901,17 +974,77 @@
       return labels[status] || status || "입금대기";
     }
 
+    function normalizeCommissionRate(value) {
+      const rate = Number(value);
+      if (!Number.isFinite(rate) || rate <= 0) return DEFAULT_COMMISSION_RATE;
+      return rate > 1 ? rate / 100 : rate;
+    }
+
+    function getCuratorByCode(curators, code) {
+      return curators.find((curator) => String(curator.code || "") === String(code || ""));
+    }
+
+    function getCuratorName(curators, code) {
+      if (!code || code === "direct") return "직접 주문";
+      const curator = getCuratorByCode(curators, code);
+      return curator?.name || "미등록 큐레이터";
+    }
+
+    function getCuratorRate(curators, code) {
+      if (!code || code === "direct") return 0;
+      const curator = getCuratorByCode(curators, code);
+      return normalizeCommissionRate(curator?.commission_rate);
+    }
+
+    function isCancelledOrder(order) {
+      return ["cancelled", "canceled", "취소"].includes(String(order.order_status || "").toLowerCase());
+    }
+
+    function buildSettlementSummary(orders, curators) {
+      const groups = new Map();
+
+      orders
+        .filter((order) => !isCancelledOrder(order))
+        .forEach((order) => {
+          const code = String(order.curator_code || "direct");
+          const curator = getCuratorByCode(curators, code);
+          const name = code === "direct" ? "직접 주문" : curator?.name || "미등록 큐레이터";
+          const rate = code === "direct" ? 0 : normalizeCommissionRate(curator?.commission_rate);
+          const key = code || "direct";
+
+          if (!groups.has(key)) {
+            groups.set(key, {
+              code: key,
+              name,
+              orderCount: 0,
+              quantity: 0,
+              sales: 0,
+              commissionRate: rate,
+              payout: 0
+            });
+          }
+
+          const group = groups.get(key);
+          group.orderCount += 1;
+          group.quantity += Number(order.quantity || 0);
+          group.sales += Number(order.total_price || 0);
+          group.payout = group.sales * group.commissionRate;
+        });
+
+      return Array.from(groups.values()).sort((a, b) => b.sales - a.sales);
+    }
+
     async function renderAdminPage() {
       renderShell(`
         <section class="admin-head">
           <div>
             <h1>주문 관리</h1>
-            <p>Supabase orders 테이블의 주문을 최신순으로 확인합니다.</p>
+            <p>Supabase orders, curators 테이블을 불러오는 중입니다.</p>
           </div>
         </section>
 
         <section class="card">
-          <p class="notice">주문 목록을 불러오는 중입니다.</p>
+          <p class="notice">관리자 데이터를 불러오는 중입니다.</p>
         </section>
       `);
 
@@ -934,18 +1067,23 @@
       }
 
       try {
-        const { data, error } = await supabaseClient
-          .from("orders")
-          .select("*")
-          .order("created_at", { ascending: false });
+        const [{ data: orders, error: ordersError }, { data: curators, error: curatorsError }] = await Promise.all([
+          supabaseClient
+            .from("orders")
+            .select("*")
+            .order("created_at", { ascending: false }),
+          supabaseClient
+            .from("curators")
+            .select("*")
+        ]);
 
-        if (error) {
-          console.error(error);
+        if (ordersError || curatorsError) {
+          console.error(ordersError || curatorsError);
           renderAdminError();
           return;
         }
 
-        renderAdminTable(data || []);
+        renderAdminDashboard(orders || [], curators || []);
       } catch (error) {
         console.error(error);
         renderAdminError();
@@ -967,38 +1105,115 @@
       `);
     }
 
-    function renderAdminTable(orders) {
-      const rows = orders.map((order) => `
-        <tr>
-          <td>${escapeHtml(order.buyer_name)}</td>
-          <td>${escapeHtml(order.buyer_phone)}</td>
-          <td>${escapeHtml(order.address)}</td>
-          <td>${escapeHtml(order.quantity)}</td>
-          <td>${formatWon(order.total_price)}</td>
-          <td>${escapeHtml(order.curator_code || "direct")}</td>
-          <td><span class="badge">${escapeHtml(orderStatusLabel(order.order_status))}</span></td>
-        </tr>
-      `).join("");
+    function renderAdminDashboard(orders, curators) {
+      const summaries = buildSettlementSummary(orders, curators);
 
       renderShell(`
         <section class="admin-head">
           <div>
             <h1>주문 관리</h1>
-            <p>Supabase orders 테이블의 주문을 최신순으로 확인합니다.</p>
+            <p>큐레이터별 주문과 예상 정산액을 확인합니다.</p>
           </div>
         </section>
 
+        <section class="admin-section">
+          <h2 class="section-title">큐레이터별 정산 요약</h2>
+          ${renderSettlementSummary(summaries)}
+        </section>
+
+        <section class="admin-section">
+          <h2 class="section-title">전체 주문 목록</h2>
+          ${renderAdminOrderTable(orders, curators)}
+        </section>
+      `);
+    }
+
+    function renderSettlementSummary(summaries) {
+      if (!summaries.length) {
+        return '<div class="card empty">정산 요약 데이터가 없습니다.</div>';
+      }
+
+      return `
+        <div class="settlement-grid">
+          ${summaries.map((summary) => `
+            <article class="settlement-card">
+              <h3>${escapeHtml(summary.name)}</h3>
+
+              <div class="mini-row">
+                <span>큐레이터 코드</span>
+                <strong>${escapeHtml(summary.code)}</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>주문건수</span>
+                <strong>${summary.orderCount.toLocaleString("ko-KR")}건</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>총 판매수량</span>
+                <strong>${summary.quantity.toLocaleString("ko-KR")}개</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>총 매출</span>
+                <strong>${formatWon(summary.sales)}</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>수수료율</span>
+                <strong>${formatRate(summary.commissionRate)}</strong>
+              </div>
+
+              <div class="mini-row">
+                <span>예상 정산액</span>
+                <strong>${formatWon(summary.payout)}</strong>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderAdminOrderTable(orders, curators) {
+      const rows = orders.map((order) => {
+        const code = order.curator_code || "direct";
+        const curatorName = getCuratorName(curators, code);
+
+        return `
+          <tr>
+            <td>${escapeHtml(formatDate(order.created_at))}</td>
+            <td>${escapeHtml(order.buyer_name)}</td>
+            <td>${escapeHtml(order.buyer_phone)}</td>
+            <td>${escapeHtml(order.address)}</td>
+            <td>${escapeHtml(order.product_name)}</td>
+            <td>${formatWon(order.product_price)}</td>
+            <td>${Number(order.quantity || 0).toLocaleString("ko-KR")}개</td>
+            <td>${formatWon(order.shipping_fee)}</td>
+            <td>${formatWon(order.total_price)}</td>
+            <td>${escapeHtml(curatorName)}</td>
+            <td>${escapeHtml(code)}</td>
+            <td><span class="badge">${escapeHtml(orderStatusLabel(order.order_status))}</span></td>
+          </tr>
+        `;
+      }).join("");
+
+      return `
         <section class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>이름</th>
+                <th>주문일</th>
+                <th>주문자명</th>
                 <th>연락처</th>
                 <th>주소</th>
+                <th>상품명</th>
+                <th>1개당 가격</th>
                 <th>수량</th>
-                <th>총액</th>
+                <th>배송비</th>
+                <th>총 결제금액</th>
+                <th>큐레이터명</th>
                 <th>큐레이터 코드</th>
-                <th>상태</th>
+                <th>주문 상태</th>
               </tr>
             </thead>
             <tbody>
@@ -1008,7 +1223,18 @@
 
           ${orders.length ? "" : '<div class="empty">아직 접수된 주문이 없습니다.</div>'}
         </section>
-      `);
+      `;
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
     }
 
     function render() {
